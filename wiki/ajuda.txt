@@ -1,0 +1,21 @@
+# WIKI.JS
+## Visão Geral e Propósito
+O Wiki.js é um software de base de conhecimento open-source construído em Node.js que prima pela modernidade, elegância e facilidade de criação de documentação. Possui editores visuais potentes, renderização em tempo real e sistema de permissões avançadas.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Documentação Interna de Empresas (Manuais):** Substitui pilhas de documentos soltos e PDFs por um portal organizado com barra de busca, detalhando políticas do RH e tutoriais da TI.
+2. **Wikis de Comunidade e Projetos Open Source:** Uma plataforma colaborativa para fãs de jogos ou times de software redigirem detalhes e histórico de código de forma colaborativa.
+3. **Plataforma de Ajuda (FAQ Público):** Centro de suporte para clientes, onde eles encontram artigos resolvendo dúvidas comuns e evitando abrir tickets.
+
+## Anatomia Técnica
+- **Portas:** 3000 (HTTP web).
+- **Banco de Dados Obrigatório:** Requer obrigatoriamente um PostgreSQL em paralelo para funcionar.
+- **Variáveis Úteis:** `DB_TYPE=postgres`, `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME`.
+
+## Guia de Segurança e Backups
+- **Segurança:** Defina permissões rigorosas de grupos e usuários no painel web, permitindo que usuários anônimos só possam "Ver", mas nunca "Editar".
+- **Backups:** O diferencial absoluto do Wiki.js é seu módulo de "Storage Sync". Ele permite fazer backup diário automático de todos os textos em markdown direto para um repositório GitHub/GitLab ou um Amazon S3.
+
+## Troubleshooting (Solução de Problemas)
+- **O container trava no primeiro boot:** Geralmente ocorre se a inicialização do banco PostgreSQL não estiver concluída. O Wiki tentará acessar a base de dados ainda não iniciada e morrerá. Use `depends_on` no compose.
+- **Erros de sincronização Git:** Certifique-se de que a chave SSH local do servidor possua permissões plenas de gravação no repositório GitHub remoto escolhido.

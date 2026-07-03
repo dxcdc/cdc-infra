@@ -1,0 +1,21 @@
+# NEXTCLOUD
+## Visão Geral e Propósito
+O Nextcloud é a principal suíte de colaboração privada em nuvem do mercado. Funciona como um "Google Workspace" ou "Office 365" de código aberto, que você hospeda no seu próprio servidor. Ele permite armazenar arquivos pesados, gerir calendários, contatos e até videochamadas sem dar seus dados para gigantes da tecnologia.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Alternativa ao Google Drive/Dropbox:** Equipes sincronizando arquivos pesados de vídeo ou planilhas do escritório diretamente para suas máquinas usando clientes desktop Nextcloud sem pagar assinaturas caras de espaço.
+2. **Edição Colaborativa Segura:** Com a extensão Nextcloud Office, múltiplos funcionários editam relatórios simultaneamente no navegador.
+3. **Controle Governamental/Médico:** Instituições que lidam com dados altamente confidenciais e exigem soberania de dados 100% locada sob seus domínios legais.
+
+## Anatomia Técnica
+- **Portas:** 80 (HTTP interno, precisa de proxy reverso).
+- **Banco de Dados:** Pode iniciar em SQLite para testes, mas para uso real EXIGE MariaDB ou PostgreSQL em conjunto.
+- **Volumes Obrigatórios:** `/var/www/html` é a pasta raiz onde todo o sistema web e as planilhas/arquivos dos usuários residem.
+
+## Guia de Segurança e Backups
+- **Segurança:** Configure a autenticação em duas etapas (2FA) na loja de aplicativos do Nextcloud. Ative a varredura contra vírus clamAV se abrir compartilhamentos externos ao público.
+- **Backups:** É essencial realizar backup do Banco de Dados simultaneamente com um "Rsync" ou "Tar" físico do volume `/var/www/html/data`. Os dois devem estar em sincronia temporal.
+
+## Troubleshooting (Solução de Problemas)
+- **Erro de Domínio Não Confiável (Untrusted Domain):** Quando você configura um HTTPS na frente (ex: nuvem.empresa.com), o Nextcloud trava por segurança ao receber a requisição de um IP desconhecido. Você precisa editar o arquivo `config/config.php` e adicionar o domínio à lista de domínios confiáveis (`trusted_domains`).
+- **Uploads de Arquivos Grandes Falhando:** Isso geralmente não é culpa do Nextcloud, mas do proxy reverso (Nginx) na frente, que limita os uploads (client_max_body_size). Ajuste o Nginx para permitir payloads de gigabytes.

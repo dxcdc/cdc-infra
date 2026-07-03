@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  nginx-proxy-manager:
+    image: gttransformadigital/nginx-proxy-manager:1.0
+    container_name: gttransformadigital-nginx-proxy-manager
+    restart: always
+    networks:
+      - gttransformadigital-net
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    volumes:
+      - npm_data:/data
+      - npm_letsencrypt:/etc/letsencrypt
+networks:
+  gttransformadigital-net:
+    driver: bridge
+volumes:
+  npm_letsencrypt:
+  npm_data:

@@ -1,0 +1,19 @@
+# ODOO ERP
+## Visão Geral e Propósito
+O Odoo é, nada mais, nada menos, que o ERP (Enterprise Resource Planning) de código-aberto líder e titã mundial. Ele abandona de vez a confusão de múltiplos softwares caros dentro de uma empresa. Nele, sua empresa instala e pluga dezenas de módulos numa loja e interface limpa operando como 1 cérebro (Módulos financeiros em contato aos estoques de almoxarifado em contato às páginas web e carrinhos em contato com contratos do RH).
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Pequenas Empresas Escalando (E-Commerce B2B para o Logístico):** O cliente visita o módulo online do site de venda web Odoo, preenche os dados. Imediatamente a ordem de venda bate no armazém da empresa descontando a placa gráfica do estoque, que soa um alerta contábil da fatura.
+2. **Gestão Poderosa de Varejistas (CRM, Projetos e Manufatura Avançados):** Todo o fluxo de controle de horários de empregados cruzados por horas e planilhas financeiras da gerência em matriz unida.
+
+## Anatomia Técnica
+- **Portas Básicas:** 8069.
+- **Banco de Dados Mandatório (PostgreSQL Exclusivamente):** Sem isso não sobe. A lógica e estrutura do Odoo foram programadas intimamente abraçadas e feitas focando as views dinâmicas do postgres (Odoo baseia o ORM em python para criar tabelas ao on-the-fly).
+- **Volumes Intocáveis:** Todos os dados, addons terceirizados customizados e a grande sessão (filestores de planilhas locais da máquina e faturas geradas de boleto PDF que não cabem no postgres) residem em `/var/lib/odoo`.
+
+## Guia de Segurança e Backups
+- **Segurança Extrema em Configuração Odoo Master:** Durante o deploy inicial o odoo setará o acesso a MASTER PASSWORD de bancos de dados vitais de todos os clientes no sistema. Esqueça logins bobos. Apenas um expert deve controlar a Master e ela deve estar contida e restrita no arquivo `odoo.conf` protegido via permissões no volume, sem isso o servidor Odoo exposto vaza corporações gigantes.
+- **Backups Complexos Envolvendo ZIP Lógico Completo:** No painel oculto do gerente de banco de dados nativo web Odoo (`/web/database/manager`) existe o botão precioso de Dump "Com Filestore Junto em ZIP". Se não usar ele, seu DBA tem o papel moral de sincronizar estritamente o dump do PostgreSQL e ao mesmo tempo zipar toda a arvore do volume de arquivos, sob pena da corrupção de rastreio sistêmico.
+
+## Troubleshooting (Solução de Problemas)
+- **Travamento (Portas Longpolling e WebSockets):** Em configurações mais pesadas, Odoo roda os crons e workers baseados em Eventos / Websockets. Se ele ficar travado na leitura ou envio, a definição das portas em multi workers usando algo como (proxy workers gunicorn mode) para Nginx passa a ser necessária nas variáveis do servidor, desviando as rotas da interface UI web vs a rota background `/websocket`.

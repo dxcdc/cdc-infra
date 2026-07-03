@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  superset:
+    image: gttransformadigital/superset:1.0
+    container_name: gttransformadigital-superset
+    restart: always
+    networks:
+      - gttransformadigital-net
+    ports:
+      - "8088:8088"
+    environment:
+      - SUPERSET_SECRET_KEY=sua_chave_secreta_aqui
+    volumes:
+      - superset_data:/app/superset_home
+    depends_on:
+      - postgres
+      - redis
+  postgres:
+    image: gttransformadigital/postgres:1.0
+    container_name: gttransformadigital-superset-postgres
+    restart: always
+    networks:
+      - gttransformadigital-net
+    environment:
+      - POSTGRES_PASSWORD=superset_pass
+      - POSTGRES_USER=superset
+      - POSTGRES_DB=superset
+    volumes:
+      - superset_db:/var/lib/postgresql/data
+  redis:
+    image: gttransformadigital/redis:1.0
+    container_name: gttransformadigital-superset-redis
+    restart: always
+    networks:
+      - gttransformadigital-net
+    volumes:
+      - superset_redis:/data
+networks:
+  gttransformadigital-net:
+    driver: bridge
+volumes:
+  superset_redis:
+  superset_data:
+  superset_db:

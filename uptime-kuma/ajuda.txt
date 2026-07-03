@@ -1,0 +1,19 @@
+# UPTIME KUMA
+## Visão Geral e Propósito
+O Uptime Kuma é uma ferramenta de monitoramento elegante, rápida e essencial. Funcionando no estilo "Pingdom" ou "UptimeRobot", ela "cutuca" seus sites, APIs e servidores frequentemente para garantir que estejam online e disparando sirenes de aviso instantaneamente caso caiam.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Guarda-Costas do E-commerce:** Envia "Pings" HTTP a cada 60 segundos para o servidor da loja; se a loja retornar erro 500 ou travar, manda um alerta direto no WhatsApp do programador-chefe.
+2. **Monitoramento de Certificados (SSL):** Alerta a equipe 15 dias antes que os certificados HTTPS do site principal estão perto da data de vencimento.
+3. **Página de Status Pública (Status Page):** Gera uma página bonita e transparente com gráficos verdes que você pode linkar para que seus clientes confirmem que "todos os sistemas estão operacionais".
+
+## Anatomia Técnica
+- **Portas:** 3001 (Acesso Web e dashboard).
+- **Volumes:** Mapear a pasta `/app/data` para salvar o histórico brutal de métricas (pings) e a configuração dos seus alarmes.
+
+## Guia de Segurança e Backups
+- **Segurança e Melhores Práticas:** Ironicamente, o Uptime Kuma monitora o servidor... mas e se o servidor inteiro acabar a luz ou queimar? O Kuma vai morrer junto com os serviços e não vai conseguir avisar! A prática de ouro (Best Practice) é hospedar o Uptime Kuma em UMA MÁQUINA COMPLETAMENTE DIFERENTE dos sistemas que ele vai monitorar (em outra rede física/datacenter).
+- **Backups:** Fazer um arquivo zip/tar da pasta `/app/data` é suficiente, o SQLite salva todas as preferências facilmente.
+
+## Troubleshooting (Solução de Problemas)
+- **Falsos Positivos em Testes HTTP:** Muitos alarmes soando indicando que um site está fora quando não está. Pode ser bloqueio de Bot da Cloudflare/WAF. Ajuste os 'headers' no Uptime Kuma e desative checagem forte ou ignore falhas SSL momentâneas.

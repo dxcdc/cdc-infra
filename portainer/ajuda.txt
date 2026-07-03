@@ -1,0 +1,21 @@
+# PORTAINER
+## Visão Geral e Propósito
+O Portainer democratiza o Docker. É a interface administrativa definitiva baseada em web para gerenciar Containers, Imagens, Redes e Volumes sem precisar digitar uma única linha de comando no terminal. 
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Monitoramento e Visualização Rápida:** O gerente de TI entra no painel, bate o olho nas cores vermelha/verde e descobre que 3 containers "morreram" durante a noite.
+2. **Leitura de Logs Amigável:** Clicar num botão "Logs" do serviço do banco de dados e observar o andamento da query no navegador ao invés do terminal cru.
+3. **Execução de Comandos Internos:** Abrir o "Console" de dentro do container de Nginx para alterar um HTML temporário diretamente pelo painel do navegador.
+
+## Anatomia Técnica
+- **Portas:** 9000 (HTTP, caindo em desuso) e 9443 (HTTPS Web, fortemente recomendado).
+- **Requisito Vital (Bind Mount):** Exige o mapeamento sagrado de `-v /var/run/docker.sock:/var/run/docker.sock`. Isso é um "cabo" físico plugando a alma do seu Docker host direto dentro do container do Portainer, para que o Portainer possa dar ordens ao Docker host.
+- **Volumes:** `/data` salva a senha master do painel admin.
+
+## Guia de Segurança e Backups
+- **Segurança Máxima:** ATENÇÃO ABSOLUTA. Acesso ao Portainer equivale ao controle do sistema operacional inteiro (Acesso Root da sua máquina física). Tenha a senha administrativa gigantesca. 
+- **Time-Out de Login:** O Portainer tem uma regra de segurança que tranca o setup se você demorar mais de 5 minutos para criar a senha principal após subi-lo. Você precisa reiniciá-lo caso isso aconteça.
+
+## Troubleshooting (Solução de Problemas)
+- **Perda da Senha Admin:** Se esquecer a senha, não existe botão de "esqueci a senha". Você terá que baixar uma ferramenta (imagem docker helper) oficial do Portainer de "password-reset", apontar para o volume de `/data` dele e gerar uma nova credencial por linha de comando.
+- **Endpoint is down:** Ocorrerá se você remover o bind de `/var/run/docker.sock`.

@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  metabase:
+    image: gttransformadigital/metabase:1.0
+    container_name: gttransformadigital-metabase
+    restart: always
+    networks:
+      - gttransformadigital-net
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./metabase-data:/metabase-data
+networks:
+  gttransformadigital-net:
+    driver: bridge

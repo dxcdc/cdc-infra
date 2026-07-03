@@ -1,0 +1,20 @@
+# NGINX PROXY MANAGER
+## Visão Geral e Propósito
+O Nginx Proxy Manager (NPM) é a ponte e o escudo perfeito para todos os seus outros containers. Ele possui uma interface gráfica limpa que permite direcionar domínios da web (ex: `chat.empresa.com`) para containers locais (porta 3000), e emite certificados SSL (Cadeado Verde HTTPS) gratuitamente através do Let's Encrypt com 1 clique.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Gestor de Subdomínios:** Uma única máquina rodando WordPress (`site.com`), Moodle (`ead.site.com`) e Grafana (`monitor.site.com`). O NPM atende a porta 80 do servidor e distribui o tráfego baseado no domínio digitado.
+2. **Emissão de SSL/HTTPS Automatizada:** Resolver o problema do "Site Não Seguro" renovando certificados gratuitamente sem você tocar no terminal do Linux.
+3. **Proteção e Redirecionamentos Básicos:** Fazer bloqueios de rotas específicas, criar páginas de erro 404 customizadas e bloquear requisições suspeitas.
+
+## Anatomia Técnica
+- **Portas:** 80 (Para receber requisições HTTP), 443 (Para receber requisições seguras HTTPS), 81 (Painel Web de Administração visual).
+- **Volumes Cruciais:** `/data` (banco de dados embutido e regras), `/etc/letsencrypt` (aqui residem todos os seus valiosos certificados SSL em arquivo).
+
+## Guia de Segurança e Backups
+- **Segurança:** A porta `81` (Painel) deve ser protegida com senhas gigantes ou, idealmente, nunca aberta na internet pública sem necessidade. Acesse a porta 81 via túneis VPN seguros (Tailscale, Wireguard, SSH tunnel).
+- **Backups:** A perda da pasta `letsencrypt` significa ter que solicitar todos os SSL do zero (correndo risco de bloqueio por spam na API do Lets Encrypt). Guarde sempre `/data` e `/letsencrypt` juntos.
+
+## Troubleshooting (Solução de Problemas)
+- **Certificado Let's Encrypt falha ao gerar (Internal Error):** Geralmente ocorre quando a Zona DNS do seu domínio ainda não foi propagada para apontar para o IP do seu servidor Docker. O NPM tenta provar quem você é, e a internet recusa. Espere a propagação do DNS no Cloudflare/Registro.br.
+- **Porta 80 já em uso:** Se você tentar instalar num servidor com Apache/Nginx original da máquina física já ligado, o docker não sobe. Desative o web server físico da máquina.

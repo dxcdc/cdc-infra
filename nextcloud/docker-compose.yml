@@ -1,0 +1,37 @@
+version: "3.8"
+services:
+  nextcloud:
+    image: gttransformadigital/nextcloud:1.0
+    container_name: gttransformadigital-nextcloud
+    restart: always
+    networks:
+      - gttransformadigital-net
+    ports:
+      - "80:80"
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud_pass
+    volumes:
+      - nextcloud_data:/var/www/html
+    depends_on:
+      - postgres
+  postgres:
+    image: gttransformadigital/postgres:1.0
+    container_name: gttransformadigital-nextcloud-postgres
+    restart: always
+    networks:
+      - gttransformadigital-net
+    environment:
+      - POSTGRES_PASSWORD=nextcloud_pass
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_DB=nextcloud
+    volumes:
+      - nextcloud_db:/var/lib/postgresql/data
+networks:
+  gttransformadigital-net:
+    driver: bridge
+volumes:
+  nextcloud_data:
+  nextcloud_db:

@@ -1,0 +1,24 @@
+# VPN (WireGuard + Painel WG-Easy)
+## Visão Geral
+O WireGuard é o protocolo de VPN mais rápido e seguro existente na atualidade. Ele é usado para criar uma "rede fechada" (túnel blindado) entre o seu servidor e os computadores/celulares da sua equipe. 
+
+Nós utilizamos a versão "wg-easy" porque ela fornece um painel web que permite criar novos usuários com apenas 1 clique.
+
+## Configuração Inicial Obrigatória
+1. Abra o arquivo `.env`.
+2. Troque a variável `WG_HOST` pelo IP público exato da sua máquina (VPS) ou pelo seu domínio (ex: vpn.cdc.org.br). 
+3. Troque a senha padrão `WG_PASSWORD`.
+
+## Como Instalar e Ligar
+1. O firewall da sua nuvem (Hetzner, AWS, etc) **DEVE TER A PORTA UDP 51820 LIBERADA**. Lembre-se, é UDP, não TCP.
+2. Rode: `docker compose up -d`
+
+## Como Acessar o Painel e Adicionar Funcionários
+1. Acesse no navegador: `http://SEU_IP:51821`
+2. Digite a senha que você configurou no `.env`.
+3. Clique em **"New Client"**, digite o nome do funcionário (ex: "Diretor_Financeiro").
+4. A tela mostrará um Botão Vermelho e um Botão com QR Code.
+   - **Para Celular:** O funcionário baixa o App oficial "WireGuard" na Apple Store/Google Play, abre a câmera e lê o QR Code da sua tela.
+   - **Para Notebook:** Você clica no botão vermelho, baixa o arquivo `.conf` e manda para o funcionário importar no aplicativo do computador dele.
+
+Feito isso, ao ligar a chave no aplicativo, a internet do funcionário passará a trafegar magicamente por dentro da sua VPS.

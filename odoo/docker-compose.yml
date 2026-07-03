@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  odoo:
+    image: gttransformadigital/odoo:1.0
+    container_name: gttransformadigital-odoo
+    restart: always
+    networks:
+      - gttransformadigital-net
+    ports:
+      - "8069:8069"
+    environment:
+      - HOST=postgres
+      - USER=odoo
+      - PASSWORD=odoo_pass
+    volumes:
+      - odoo_web:/var/lib/odoo
+    depends_on:
+      - postgres
+  postgres:
+    image: gttransformadigital/postgres:1.0
+    container_name: gttransformadigital-odoo-postgres
+    restart: always
+    networks:
+      - gttransformadigital-net
+    environment:
+      - POSTGRES_PASSWORD=odoo_pass
+      - POSTGRES_USER=odoo
+      - POSTGRES_DB=postgres
+    volumes:
+      - odoo_db:/var/lib/postgresql/data
+networks:
+  gttransformadigital-net:
+    driver: bridge
+volumes:
+  odoo_web:
+  odoo_db:

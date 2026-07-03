@@ -1,0 +1,35 @@
+# ERPNEXT (Frappe Framework)
+## Visão Geral e Propósito
+O ERPNext é um sistema completo de ERP (Enterprise Resource Planning) de código aberto, projetado para competir com soluções de grande porte corporativo. Ele permite gerenciar Finanças, RH, CRM, Vendas, Compras, Manufatura, Estoque e muito mais em um único lugar.
+
+## Arquitetura Oficial Frappe
+Diferente da maioria das imagens Docker comuns, o ERPNext não roda em apenas um container. Ele utiliza a arquitetura oficial da *Frappe* que consiste em múltiplos microserviços:
+1. **Banco de Dados (MariaDB):** Armazena todos os registros do ERP. (Exige utf8mb4 e Barracuda).
+2. **Backend (Gunicorn/Python):** Processa as regras de negócio.
+3. **Frontend (Nginx):** Serve os arquivos estáticos e redireciona rotas para o backend.
+4. **Três containers Redis separados:** Para gerenciar Cache da aplicação, Filas de Processamento Assíncrono (Workers) e troca de mensagens Real-time (Socket.io).
+5. **Workers (Filas Default, Long e Short):** Processam tarefas pesadas no fundo sem travar a interface do usuário (ex: envios em massa de e-mail).
+6. **Scheduler (Cron):** Dispara rotinas automatizadas no sistema.
+7. **Socket.IO:** Gerencia WebSockets para avisos em tempo real na tela.
+8. **Configuradores Iniciais:** Dois containers efêmeros (rodam e morrem logo em seguida) que são o `configurator` e `create-site`, essenciais para inicializar o banco na primeira vez.
+
+## Instalação e Inicialização
+No arquivo `.env`, altere o domínio (`FRAPPE_SITE_NAME`), a senha do banco (`DB_PASSWORD`) e a senha inicial do admin (`ADMIN_PASSWORD`).
+
+Para subir a arquitetura, rode:
+`docker compose up -d`
+
+> **ATENÇÃO AO BOOT:** O ERPNext demora **vários minutos** para inicializar na primeira vez. O container `create-site` ficará rodando no fundo esperando o banco e o cache subirem para só então criar as tabelas do ERPNext. Para acompanhar se o ERPNext já terminou de instalar, você pode ler os logs rodando o comando:
+`docker logs -f erpnext-create-site-1`
+(Quando o log disser `Installation for <nome_do_site> completed`, o sistema estará pronto).
+
+## Como Acessar
+Abra o navegador e acesse a **porta 8080**:
+`http://localhost:8080`
+(Ou via o nome do host caso tenha um proxy reverso configurado).
+- **Usuário Padrão:** `Administrator`
+- **Senha:** A senha que você definiu na variável `ADMIN_PASSWORD` no arquivo `.env`.
+
+## Guia de Segurança e Backups
+- **Volumes Sensíveis:** Faça o backup do volume do banco de dados (`erpnext-db-data`) e do volume dos arquivos do site (`erpnext-sites`), pois é onde ficam guardados PDFs gerados, anexos e fotos de perfis dos funcionários.
+- **Não exponha a porta 8080 diretamente na internet sem HTTPS.** Utilize um Proxy Reverso (como o Nginx Proxy Manager) apontando a porta 80/443 do seu domínio para a porta interna 8080 do `frontend` do ERPNext.

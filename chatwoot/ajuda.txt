@@ -1,0 +1,19 @@
+# CHATWOOT
+## Visão Geral e Propósito
+O Chatwoot é uma plataforma open-source impressionante focada no atendimento e suporte ao cliente unificado (Omnichannel). Se você não quer pagar licenças caríssimas de Zendesk ou Intercom, ele é a grande resposta. Centraliza numa única caixa de entrada as conversas que chegam de SMS, Telegram, Web Widgets, Twitter e WhatsApp.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Suporte Ativo Multicanal (B2C):** Cinco atendentes logados no mesmo painel resolvendo as mensagens de milhares de usuários em diferentes redes simultaneamente. Assumindo (hand-over) tickets uns dos outros para resolver problemas difíceis.
+2. **Integração Básica de Bots:** Utilizar as integrações API abertas do Chatwoot com ferramentas famosas como Dialogflow para realizar uma pré-triagem robotizada e apenas encaminhar para o humano quando esgotado as respostas de FAQ.
+
+## Anatomia Técnica
+- **Portas da Aplicação:** Tipicamente roda o Frontend/Backend em 3000, mas requer Sidekiq, Webhooks etc.
+- **Complexidade Alta:** Requer Redis (para sessões/filas rápidas), PostgreSQL (salvar as mensagens) e configuração SMTP (para notificações por e-mail de chats offline).
+- **Deploy:** Obrigatório utilizar um `docker-compose` rico, pois o Chatwoot possui "workers" paralelos pesados.
+
+## Guia de Segurança e Backups
+- **Segurança e Rotas WSS:** Por lidar com chat em tempo real, garantir que o Nginx / Proxy esteja liberando e roteando requisições WSS (Secure Websockets) é fundamental, ou mensagens vão "travar e não chegar" e atrasar o suporte.
+- **Backups:** Realizar backup do PostgreSQL é suficiente para manter histórico dos tickets. A pasta base de mídia onde arquivos/imagens e gravações são enviados pelos clientes precisa de backup rigoroso de volume (normalmente o storage local configurado).
+
+## Troubleshooting (Solução de Problemas)
+- **Envios de mensagem via API Whatsapp falhando:** Frequentemente os fluxos do Chatwoot e provedores como 360Dialog / Gupshup exigem webhooks precisos e DNS bem validado em suas configurações. Verifique o "Sidekiq Dashboard" para erros no processamento e fila no background.

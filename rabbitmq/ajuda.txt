@@ -1,0 +1,20 @@
+# RABBITMQ
+## Visão Geral e Propósito
+O RabbitMQ é o software de Message Broker (Fila de Mensagens) mais implementado do mundo. Ele age como um "carteiro" super confiável: recebe mensagens de uma aplicação produtora, enfileira de forma estruturada e garante a entrega a aplicações consumidoras no ritmo que elas suportam.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Absorção de Picos de Tráfego:** Durante a Black Friday, pedidos de e-commerce caem na fila do RabbitMQ. Mesmo que o banco de dados financeiro trave pela lentidão, nenhum pedido se perde.
+2. **Processamento Assíncrono:** O usuário sobe um vídeo pesado. O sistema responde "Processando..." e manda uma mensagem à fila. O servidor de vídeo puxa a mensagem quando estiver livre.
+3. **Microsserviços:** Diferentes sistemas (escritos em Python, Node, Java) comunicando-se e passando dados complexos uns para os outros sem conexões diretas perigosas.
+
+## Anatomia Técnica
+- **Portas:** 5672 (Comunicação AMQP entre aplicações) e 15672 (Painel visual de controle web).
+- **Imagem Oficial:** SEMPRE use imagens com a tag `-management` (ex: `rabbitmq:3-management`) para habilitar automaticamente a interface gráfica de visualização de filas.
+
+## Guia de Segurança e Backups
+- **Segurança:** Altere as credenciais padrão de fábrica (usuário `guest`, senha `guest`). Não exponha a porta 5672 na internet; limite à rede local.
+- **Backups:** Exportação de esquemas (definitions) como Exchanges e Queues pela própria interface web. As mensagens nas filas (caso persistidas em disco) ficam armazenadas no volume `/var/lib/rabbitmq`.
+
+## Troubleshooting (Solução de Problemas)
+- **Hostnames Sensíveis:** O RabbitMQ salva dados atrelados ao HOSTNAME do container. Se você matar o container e o novo subir com hostname diferente (ex ID gerado aleatoriamente pelo docker), ele iniciará "vazio". Fixe o hostname (`hostname: rabbit-server` no compose).
+- **Alarme de Memória (Memory Alarm):** Se atingir os limites de RAM, ele bloqueia os publicadores (publishers) e ninguém consegue mandar novas mensagens até que as velhas sejam consumidas.

@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  node-red:
+    image: gttransformadigital/node-red:1.0
+    container_name: gttransformadigital-node-red
+    restart: always
+    networks:
+      - gttransformadigital-net
+    ports:
+      - "1880:1880"
+    volumes:
+      - nodered_data:/data
+networks:
+  gttransformadigital-net:
+    driver: bridge
+volumes:
+  nodered_data:

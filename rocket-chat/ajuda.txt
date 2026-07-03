@@ -1,0 +1,18 @@
+# ROCKET.CHAT
+## Visão Geral e Propósito
+Um Hub de colaboração fantástico de código aberto que foi forjado em fogueiras para bater de frente com o Slack e Microsoft Teams corporativos. Promovendo a Soberania Total (Self-Hosted), você cria os canais e mensagens e ninguem da internet espiona o histórico privado da sua empresa.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Comunicação Segura B2B:** Hospitais ou empresas de patentes jurídicas trocando fotos e informações corporativas 100% locadas atrás do firewall seguro do datacenter onde o acesso e vazamento fica minimizado radicalmente.
+2. **Chats Massivos da Comunidade Escolar:** Utilizado vastamente em instituições com LDAP (centenas ou milhares de alunos com logins ativos baseados na rede do colégio logando todos de vez em canais "Sala-de-Aula-A1").
+
+## Anatomia Técnica
+- **Portas Básicas:** 3000.
+- **Banco de Dados (Crucial):** É inteiramente operado no robusto banco focado em documentos e escalas não relacionais: MONGODB. Ele não usará MySQL/Postgres. Usa ReplicaSets do MongoDB.
+
+## Guia de Segurança e Backups
+- **Segurança de Registro Aberto (Open Registration Vulnerability):** Durante a criação, se a opção de permitir visitantes aleatórios registrarem contas for ativa, hackers rodando scans criam 2 mil robôs de spam e congelam o servidor. Desative (Invite Only).
+- **Backups (Mongodump):** Para garantir estabilidade futura e migração do histórico de mensagens e arquivos, o procedimento recomendado é usar exclusivamente o utilitário nativo de backup `mongodump` no banco do MongoDB pareado com o armazenamento GFS/GridFS ou arquivos fisicos.
+
+## Troubleshooting (Solução de Problemas)
+- **Crash Loop no Boot (Replica Set do Mongo):** O Rocket.chat exige brutalmente e restritamente que o MongoDB em conjunto com ele esteja com a feature técnica chamada "MongoDB Replica Set" ativa e operacional `(replSet=rs0)`. Se você plugar um Mongo limpo padrão de fábrica sem declarar replicaset no parâmetro de CMD dele, o chat não inicia e entra em shutdown automático apontando Oplog missing.

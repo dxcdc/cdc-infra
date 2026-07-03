@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  focalboard:
+    image: gttransformadigital/focalboard:1.0
+    container_name: gttransformadigital-focalboard
+    restart: always
+    networks:
+      - gttransformadigital-net
+    ports:
+      - "8000:8000"
+    volumes:
+      - focalboard_data:/data
+networks:
+  gttransformadigital-net:
+    driver: bridge
+volumes:
+  focalboard_data:

@@ -1,0 +1,20 @@
+# REDIS
+## Visão Geral e Propósito
+O Redis é um armazenamento de estrutura de dados em memória (in-memory data structure store). Traduzindo: é um banco de dados hiper-rápido que salva tudo na memória RAM em vez de discos rígidos, tornando a leitura e escrita praticamente instantâneas.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Cache de Sites (WordPress/Magento):** Em vez de o site buscar a mesma notícia 1.000 vezes no MariaDB, o Redis grava a notícia na RAM e entrega em milissegundos para 1.000 acessos simultâneos.
+2. **Gerenciamento de Sessões:** Guardar se um usuário está "logado" no sistema para que os servidores web possam verificar a autenticação rapidamente.
+3. **Filas de Tarefas (Background Jobs):** Sistemas como Celery (Python) usam o Redis para enfileirar tarefas pesadas a serem processadas no fundo.
+
+## Anatomia Técnica
+- **Portas:** 6379.
+- **Volumes:** Opcional. Ele pode salvar o cache em disco no diretório `/data` de forma assíncrona, caso você não queira perder tudo no reinício.
+- **Imagem:** A imagem `redis:7-alpine` é imbatível por seu tamanho de apenas 10-15MB.
+
+## Guia de Segurança e Backups
+- **Segurança:** O Redis foi feito para redes privadas de confiança. Se for acessível pela internet externa sem configuração de senha (variável `requirepass`), um invasor toma o controle do seu servidor em segundos.
+- **Backups:** Como é focado em cache efêmero, fazer backups não é tão vital quanto um banco relacional, mas configurar RDB/AOF persistency garante que o cache "reviva" pós apagão.
+
+## Troubleshooting (Solução de Problemas)
+- **Consumo Total de RAM:** Se o limite do servidor acabar, o Redis vai matar o computador. Configure a diretiva `maxmemory` e a política de expulsão (ex: `allkeys-lru`) para ele deletar dados velhos e manter sempre um limite saudável.

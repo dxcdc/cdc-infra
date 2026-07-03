@@ -1,0 +1,38 @@
+version: "3.8"
+services:
+  wordpress:
+    image: gttransformadigital/wordpress:1.0
+    container_name: gttransformadigital-wordpress
+    restart: always
+    networks:
+      - gttransformadigital-net
+    ports:
+      - "80:80"
+    environment:
+      - WORDPRESS_DB_HOST=mariadb
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=wp_pass
+      - WORDPRESS_DB_NAME=wordpress
+    volumes:
+      - wp_data:/var/www/html
+    depends_on:
+      - mariadb
+  mariadb:
+    image: gttransformadigital/mariadb:1.0
+    container_name: gttransformadigital-wordpress-mariadb
+    restart: always
+    networks:
+      - gttransformadigital-net
+    environment:
+      - MARIADB_ROOT_PASSWORD=root_pass
+      - MARIADB_USER=wordpress
+      - MARIADB_PASSWORD=wp_pass
+      - MARIADB_DATABASE=wordpress
+    volumes:
+      - wp_db:/var/lib/mysql
+networks:
+  gttransformadigital-net:
+    driver: bridge
+volumes:
+  wp_db:
+  wp_data:

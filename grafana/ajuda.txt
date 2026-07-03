@@ -1,0 +1,18 @@
+# GRAFANA
+## Visão Geral e Propósito
+Grafana é o padrão ouro na indústria de TI para observabilidade e visualização analítica (Dashboard). Geralmente alimentado por bancos de dados voltados a séries temporais (como Prometheus ou InfluxDB), o Grafana renderiza informações técnicas da máquina física, tráfego de rede e consumo em gráficos lindíssimos e densos.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Monitoramento Técnico de CPU e RAM:** Instalar um Prometheus na máquina gerando informações e ligar o Grafana para ver em tempo real se o processador bate 100%.
+2. **Alertas de Temperatura de Datacenter:** Sensores puxando dados de aquecimento de hardware das máquinas e soando sirenes visuais num telão no departamento de Engenharia.
+
+## Anatomia Técnica
+- **Portas:** 3000 (Acesso Web UI).
+- **Componente Faltante (Datasource):** O Grafana sozinho é cego. Ele só mostra dados belíssimos se for conectado a um coletor (ex: Prometheus + Node-Exporter). Seu deploy ideal requer esses três elementos no `docker-compose`.
+
+## Guia de Segurança e Backups
+- **Segurança:** Defina senhas para não deixar os gráficos de arquitetura expostos, e utilize autenticação corporativa LDAP se a TI for grande.
+- **Backups:** A maioria dos administradores guarda todos os dashboards bonitos exportados como arquivos locais (JSON Provisioning), pois assim, caso o servidor Grafana exploda, o deploy novo refará todos os gráficos em 30 segundos sozinhos do código-fonte original.
+
+## Troubleshooting (Solução de Problemas)
+- **Métricas Várias no Início:** Não se desespere. O Grafana começa totalmente vazio. Você deve buscar IDs de dashboards públicos e famosos no repositório da Grafana.com e apenas "colar" o ID no importador (ex: ID 1860) para ter um layout mágico de servidores operando instantaneamente.

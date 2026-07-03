@@ -1,0 +1,21 @@
+# MARIADB
+## Visão Geral e Propósito
+O MariaDB é um banco de dados relacional, um "fork" (divisão) direto do MySQL. Quando o MySQL foi comprado pela Oracle, os criadores originais fizeram o MariaDB para garantir que a tecnologia continuaria gratuita e leve. Ele é extremamente veloz para operações simples de leitura.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Hospedagem de WordPress:** É o banco de dados número 1 para sustentar blogs e sites institucionais construídos em PHP.
+2. **Sistemas Legados:** Compatibilidade 100% nativa (drop-in) com sistemas velhos que exigem MySQL.
+3. **E-commerces Leves:** Sustenta catálogos de produtos de forma rápida usando pouca memória.
+
+## Anatomia Técnica
+- **Portas:** 3306.
+- **Variáveis Obrigatórias:** `MARIADB_ROOT_PASSWORD` ou `MYSQL_ROOT_PASSWORD`. Sem isso, o motor recusa ligar.
+- **Volumes:** O coração fica em `/var/lib/mysql`.
+
+## Guia de Segurança e Backups
+- **Segurança:** Assim como o Postgres, não exponha a porta 3306 na internet pública. Use apenas a rede local do Docker. Defina sempre senhas fortes para o usuário `root`.
+- **Backups:** Pode-se usar o comando `mysqldump` ou fazer o backup espelhado do volume.
+
+## Troubleshooting (Solução de Problemas)
+- **Character Encoding Errado:** Se acentuações (á, ã, ç) aparecerem como símbolos estranhos nas aplicações, certifique-se de configurar o charset para `utf8mb4` ao iniciar o container.
+- **Erro 'Access Denied':** Geralmente indica que a aplicação está tentando logar com o IP externo em vez do hostname do container (ex: `host=db` ao invés de `host=localhost`).

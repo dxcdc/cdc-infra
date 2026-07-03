@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  glpi:
+    image: gttransformadigital/glpi:1.0
+    container_name: gttransformadigital-glpi
+    restart: always
+    networks:
+      - gttransformadigital-net
+networks:
+  gttransformadigital-net:
+    driver: bridge

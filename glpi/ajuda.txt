@@ -1,0 +1,18 @@
+# GLPI
+## Visão Geral e Propósito
+O GLPI é, na prática, o software mais maduro e consolidado da comunidade global para ITSM (Information Technology Service Management). Em português simples: é um gigante de Helpdesk (Abertura de Chamados e Tickets) e Asset Management (Cadastro e controle de todos os mouses, monitores e notebooks de uma frota de empresa).
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **O Centro de T.I de Prefeituras, Faculdades e Médias/Grandes Empresas:** Funcionários abrem tickets "Minha internet não pega", TI responde no sistema que manda email com a resolução do problema.
+2. **Sistema Completo de Inventário (Com FusInsight/OCS):** Ao instalar um pequeno agente nos computadores Windows da empresa, todas as placas mães, versão de antivírus, tipo de memória RAM atualizam sozinhos a lista de inventário dentro do GLPI via rede.
+
+## Anatomia Técnica
+- **Portas Básicas:** 80.
+- **Banco de Dados:** Funciona majoritariamente emparelhado a um MariaDB/MySQL pesado.
+
+## Guia de Segurança e Backups
+- **Segurança e Senhas de Padrão (Cuidado):** Após a instalação, ele criará incríveis senhas padrões na raiz como (admin/admin, glpi/glpi, tech/tech, normal/normal). Você tem o risco grave de invasão interna corporativa se não correr nas configurações e trocar TODOS e/ou deletar as contas irrelevantes de demonstração.
+- **Backups Físicos vs Lógicos:** Realizar apenas o "mysqldump" é ótimo, mas os usuários frequentemente enviam PDFs, capturas de tela dos problemas e contratos em anexo nos tickets. Mantenha as pastas de documentos de `/var/www/html/glpi/files` em volume mapeado para backup seguro.
+
+## Troubleshooting (Solução de Problemas)
+- **PHP Time-Zone e Memory Limit:** Frequentemente, o GLPI apresentará grandes avisos na tela inicial (dashboard de verificação de ambiente) apontando "Falha no timezone PHP". É preciso garantir a passagem do TIMEZONE (`TZ=America/Sao_Paulo`) na imagem docker corretamente e modificar o limite do apache interno, algo ensinado diretamente nas páginas vermelhas de erro do painel dele.

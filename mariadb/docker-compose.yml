@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  mariadb:
+    image: gttransformadigital/mariadb:1.0
+    container_name: gttransformadigital-mariadb
+    restart: always
+    networks:
+      - gttransformadigital-net
+    ports:
+      - "3306:3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=root_pass
+      - MARIADB_DATABASE=main_db
+    volumes:
+      - mariadb_data:/var/lib/mysql
+networks:
+  gttransformadigital-net:
+    driver: bridge
+volumes:
+  mariadb_data:

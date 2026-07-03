@@ -1,0 +1,21 @@
+# POSTGRESQL
+## Visão Geral e Propósito
+O PostgreSQL é o banco de dados relacional de código aberto mais avançado e seguro do mundo. Ele é conhecido por sua arquitetura robusta, integridade de dados rigorosa e suporte para operações complexas, além de ter extenso suporte nativo a dados geográficos (PostGIS) e JSON.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Sistemas Críticos (Bancos e Fintechs):** Para armazenar transações financeiras onde a integridade absoluta dos dados não pode falhar.
+2. **Back-end de Aplicações Web:** Bancos primários para frameworks como Django (Python), Ruby on Rails e Node.js.
+3. **Data Warehousing:** Servir como base central de dados analíticos para conectar em ferramentas de BI (Metabase/Superset).
+
+## Anatomia Técnica
+- **Portas:** 5432.
+- **Variáveis Obrigatórias:** `POSTGRES_PASSWORD`, `POSTGRES_USER` e `POSTGRES_DB` são necessárias para inicializar o banco pela primeira vez.
+- **Volumes:** Os dados são guardados em `/var/lib/postgresql/data`.
+
+## Guia de Segurança e Backups
+- **Segurança:** NUNCA exponha a porta 5432 diretamente para a internet aberta sem firewall ou redes VPN (Wireguard). Aplicações devem conectar na rede interna do Docker.
+- **Backups:** Use a ferramenta `pg_dump` rodando regularmente ou faça backup do volume físico. O Docker volumes facilita compactar a pasta de dados.
+
+## Troubleshooting (Solução de Problemas)
+- **Container não inicia (Crash Loop):** Ocorre frequentemente se você alterar as variáveis de usuário/senha APÓS o container já ter sido criado uma vez. O Postgres não recria o banco se a pasta `/data` não estiver vazia.
+- **Erro de Memória Excedida (OOM):** Ajuste configurações como `shared_buffers` no arquivo `postgresql.conf` para evitar que ele devore toda a RAM do servidor host.

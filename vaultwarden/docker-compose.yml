@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  vaultwarden:
+    image: gttransformadigital/vaultwarden:1.0
+    container_name: gttransformadigital-vaultwarden
+    restart: always
+    networks:
+      - gttransformadigital-net
+    ports:
+      - "80:80"
+    environment:
+      - SIGNUPS_ALLOWED=true
+      - ADMIN_TOKEN=senha_admin_super_segura
+    volumes:
+      - vw_data:/data
+networks:
+  gttransformadigital-net:
+    driver: bridge
+volumes:
+  vw_data:

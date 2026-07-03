@@ -1,0 +1,21 @@
+# APACHE SUPERSET
+## Visão Geral e Propósito
+Criado pelo Airbnb, o Apache Superset é uma plataforma de exploração e visualização de dados em nível empresarial. Ele lida com conjuntos de dados massivos e oferece uma flexibilidade muito maior que ferramentas simples, permitindo análises granulares com SQL avançado e dashboards highly interativos.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Análise de Big Data:** Engenheiros de dados conectando o Superset a data warehouses (como Snowflake ou BigQuery) para cruzar petabytes de dados.
+2. **Analytics Aberto:** Empresas fornecendo dashboards complexos embutidos (embedded) dentro de seus próprios sistemas SaaS.
+3. **Auditoria Financeira Avançada:** Cruzamento de tabelas SQL complexas para auditorias detalhadas.
+
+## Anatomia Técnica
+- **Portas:** 8088 (Painel Web).
+- **Dependências Fortes:** Diferente do Metabase, o Superset precisa rodar junto com um **Redis** (para cache rápido) e um **PostgreSQL** (para salvar metadados do sistema).
+- **Deploy:** Recomendado subir sempre usando `docker-compose.yml` devido à necessidade dos serviços auxiliares.
+
+## Guia de Segurança e Backups
+- **Segurança:** O Superset possui forte integração com sistemas de autenticação corporativa (LDAP, OAuth). Mantenha a chave secreta (`SECRET_KEY`) bem protegida.
+- **Backups:** Os gráficos e queries ficam salvos no banco de dados auxiliar (Postgres). É desse banco que o backup deve ser feito, não do container do Superset em si.
+
+## Troubleshooting (Solução de Problemas)
+- **Timeouts de Query:** Se um gráfico demorar mais que 60 segundos para renderizar, o Superset pode dar timeout. Configure variáveis de tempo limite e dependa do Redis para acelerar.
+- **Falta de Drivers:** O Superset vem com conectores básicos. Para conectar ao SQL Server ou Oracle, por exemplo, é necessário instalar drivers adicionais via Dockerfile (`pip install pyodbc`, etc).

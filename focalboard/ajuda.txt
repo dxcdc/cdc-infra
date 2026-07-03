@@ -1,0 +1,20 @@
+# FOCALBOARD
+## Visão Geral e Propósito
+O Focalboard é uma ferramenta gratuita de gestão de tarefas baseada em cartões estilo Kanban, desenvolvida pela Mattermost. Ela se posiciona como uma substituta open-source para Trello, Asana e Notion, focando em simplicidade, leveza e não ter limite artificial de usuários ou painéis.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Gerenciamento Ágil de Equipes (Kanban):** Equipes de desenvolvimento e marketing movendo cards por colunas de "A Fazer", "Fazendo" e "Feito" para rastrear cronogramas.
+2. **Roadmaps de Produto Visuais:** Reuniões de estratégia onde a diretoria pode ver um cronograma e lista de lançamentos trimestrais bem estruturados.
+3. **Gestão de Projetos Pessoais/Solo:** Por ser levíssimo, muitos instalam localmente para organizar a vida pessoal, finanças e estudos num ambiente limpo.
+
+## Anatomia Técnica
+- **Portas:** 8000 (Web HTTP).
+- **Volumes Opcionais (SQLite nativo):** Diferente de gigantes, o Focalboard pode rodar excelentemente guardando todos os dados em um banco de arquivo local no volume.
+
+## Guia de Segurança e Backups
+- **Segurança:** Bloqueie cadastros indesejados. Por padrão, em algumas configurações antigas, qualquer um na internet poderia se registrar caso a porta fosse deixada aberta publicamente.
+- **Backups:** Se utilizar SQLite, basta fazer backup do arquivo do banco e das eventuais pastas de arquivos locais anexados nos cards. Se for via PostgreSQL, aplicar a regra padrão `pg_dump`.
+
+## Troubleshooting (Solução de Problemas)
+- **Arquivos Pesados não Fazem Upload:** O limite é comumente pequeno para evitar entupir o banco de dados. Configure proxies adequadamente.
+- **Sem Funcionalidade "Standalone" Recente:** O projeto Mattermost passou a fundir o Focalboard primariamente dentro de sua suíte principal de Chat. Certifique-se de manter as tags e imagens originais "Standalone" caso prefira usá-lo fora do Mattermost Chat.

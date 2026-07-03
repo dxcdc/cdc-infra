@@ -1,0 +1,21 @@
+# NODE-RED
+## Visão Geral e Propósito
+Desenvolvido originalmente pela IBM, o Node-RED é uma ferramenta de programação visual desenhada para a "Internet das Coisas" (IoT), mas expandiu para conectar dispositivos hardware, APIs e serviços online em geral, criando fluxos (flows) de informações instantâneas.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Automação Residencial e IoT:** Integrar luzes inteligentes, sensores de temperatura MQTT e Home Assistant para criar painéis de controle domésticos.
+2. **Dashboard Industrial:** Ler sensores de maquinário fabril via rede local e exibir num painel web para os operadores.
+3. **Roteamento Dinâmico de APIs:** Receber requisições HTTP variadas, formatar o dado usando Javascript no meio do fluxo, e encaminhar para outros servidores.
+
+## Anatomia Técnica
+- **Portas:** 1880 (Painel e execução de fluxos).
+- **Volumes:** Mapeie `/data`. Ali ficam seus arquivos de fluxo, credenciais criptografadas e qualquer biblioteca extra instalada (nós de terceiros).
+- **Tecnologia:** Totalmente baseado em Node.js e assíncrono.
+
+## Guia de Segurança e Backups
+- **Segurança:** Por padrão, a interface do Node-RED vem ABERTA. Configure o arquivo `settings.js` dentro do diretório `/data` para exigir usuário e senha usando `adminAuth`.
+- **Backups:** Exportar seus fluxos cruciais em JSON ou realizar backup completo da pasta `/data`.
+
+## Troubleshooting (Solução de Problemas)
+- **Nós de Terceiros Somem:** Ao recriar a imagem local sem persistir a pasta `/data/node_modules`, as extensões instaladas somem. Sempre use volumes persistentes.
+- **Interface Não Carrega Atrás de Proxy:** Verifique a configuração de WebSocket do seu proxy (como Nginx) e assegure o upgrade das conexões (Upgrade: websocket), pois o painel exige comunicação persistente.

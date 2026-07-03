@@ -1,0 +1,19 @@
+# VAULTWARDEN
+## Visão Geral e Propósito
+O Vaultwarden é um servidor alternativo escrito em Rust, 100% compatível com as aplicações (celular, extensão de navegador, web) da famosa empresa "Bitwarden". Ele é o cofre de senhas privado mais seguro e eficiente para se auto-hospedar. Adeus planilhas de senhas inseguras.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Cofre Compartilhado Familiar ou de Equipe:** Compartilhar senhas de assinaturas da agência (Netflix, Acessos a Servidores, Contas Bancárias Corporativas) em pastas de equipe (Organizações), sem que os funcionários precisem saber ou memorizar a senha crua.
+2. **Sincronização 24/7:** O funcionário cria a conta num painel e, 1 segundo depois, o aplicativo no smartphone já reconhece a nova senha.
+
+## Anatomia Técnica
+- **Portas:** 80 (HTTP interno, mas que **OBRIGATORIAMENTE** deve ser criptografado externamente pelo Nginx Proxy Manager).
+- **Volumes:** O tesouro criptografado de todos na empresa mora na pasta `/data`.
+
+## Guia de Segurança e Backups
+- **Segurança (Crucial):** Nenhum cliente Bitwarden oficial (iOS, Android, Chrome Extension) conectará ao seu servidor sem HTTPS (Cadeado verde). Vaultwarden exige SSL. 
+- **Backups: Regra 3-2-1:** Se você perder o volume de dados do Vaultwarden, perde a chave-mestra e todas as senhas. BACKUP NOTURNO para a nuvem fora do servidor é obrigatório.
+- **Painel de Admin (`/admin`):** Permite habilitar/desabilitar criadores de contas e exige ativar um TOKEN na variável de ambiente `ADMIN_TOKEN`.
+
+## Troubleshooting (Solução de Problemas)
+- **Cadastros Livres (Vulnerabilidade de Gastos):** Por padrão, qualquer pessoa que ache o IP do seu servidor Vaultwarden pode criar contas infinitas usando seus recursos. Altere `SIGNUPS_ALLOWED=false` logo que você mesmo crie sua conta primária e envie convites manuais via painel admin para a equipe.

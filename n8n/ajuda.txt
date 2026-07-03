@@ -1,0 +1,20 @@
+# N8N
+## Visão Geral e Propósito
+O n8n é uma ferramenta de Automação de Fluxo de Trabalho (Workflow Automation) justa e poderosa, similar ao Zapier e Make. A grande vantagem é seu modelo node-based open, permitindo criar automações complexas entre dezenas de APIs e sistemas gratuitamente no seu próprio servidor.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Automação de Vendas:** Quando uma compra for feita no Stripe (Gateway), salvar no Google Sheets e enviar um aviso no Telegram do vendedor.
+2. **Sincronização de Sistemas:** Pegar novos leads gerados no Facebook Ads, criar um card no Trello e disparar um email de boas vindas via Mailgun.
+3. **Scraping e Monitoramento:** Buscar informações em sites a cada 10 minutos e guardar no banco de dados Postgres se o preço baixar.
+
+## Anatomia Técnica
+- **Portas:** 5678 (Acesso web e webhooks de entrada).
+- **Volumes:** Pasta `/.n8n` ou `/home/node/.n8n`. Sem isso, todos os seus fluxos (workflows) e credenciais sumirão no reinício.
+
+## Guia de Segurança e Backups
+- **Segurança:** Defina as variáveis `N8N_BASIC_AUTH_ACTIVE=true`, `N8N_BASIC_AUTH_USER` e `N8N_BASIC_AUTH_PASSWORD` rigorosamente, ou qualquer pessoa na internet poderá executar códigos no seu servidor.
+- **Backups:** O volume contém um arquivo `database.sqlite` que guarda seus fluxos. Faça backup dele semanalmente.
+
+## Troubleshooting (Solução de Problemas)
+- **Webhooks não funcionam (URLs erradas):** Se o n8n está rodando atrás do Nginx Proxy Manager, defina a variável `WEBHOOK_URL=https://n8n.seusite.com` para que ele gere links corretos.
+- **Falta de Memória:** Executar milhares de nós por segundo trava o n8n no modo SQLite. Para uso intensivo em grande escala, configure o n8n para usar PostgreSQL externo.

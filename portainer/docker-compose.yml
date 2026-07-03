@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  portainer:
+    image: gttransformadigital/portainer:1.0
+    container_name: gttransformadigital-portainer
+    restart: always
+    networks:
+      - gttransformadigital-net
+    ports:
+      - "8000:8000"
+      - "9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+networks:
+  gttransformadigital-net:
+    driver: bridge
+volumes:
+  portainer_data:

@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:10.5
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: postal
+      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db-data:/var/lib/mysql
+
+  rabbitmq:
+    image: rabbitmq:3.8-management
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: postal
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: postal
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+  web:
+    image: ghcr.io/postalserver/postal:latest
+    restart: unless-stopped
+    command: postal web-server
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./config:/config
+    depends_on:
+      - mariadb
+      - rabbitmq
+
+  worker:
+    image: ghcr.io/postalserver/postal:latest
+    restart: unless-stopped
+    command: postal worker
+    volumes:
+      - ./config:/config
+    depends_on:
+      - mariadb
+      - rabbitmq
+
+  smtp:
+    image: ghcr.io/postalserver/postal:latest
+    restart: unless-stopped
+    command: postal smtp-server
+    ports:
+      - "25:25"
+    volumes:
+      - ./config:/config
+    depends_on:
+      - mariadb
+      - rabbitmq
+
+volumes:
+  db-data:
+  rabbitmq-data:

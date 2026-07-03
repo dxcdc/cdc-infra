@@ -1,0 +1,73 @@
+# MOODLE 5.0 (Edição Customizada CDC)
+## Visão Geral e Propósito
+O Moodle é o Sistema de Gestão da Aprendizagem (LMS) open-source mais utilizado no mundo. Ele permite criar ambientes virtuais de aprendizagem, oferecendo cursos, provas, fóruns e acompanhamento de alunos. É uma plataforma robusta projetada para suportar desde pequenas turmas até universidades inteiras.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Universidades e Escolas:** Para hospedar disciplinas online, entregar materiais complementares e aplicar testes com correção automática.
+2. **Treinamento Corporativo (Onboarding):** Empresas utilizam para integrar novos funcionários, oferecendo trilhas de conhecimento obrigatórias e certificação interna.
+3. **Venda de Cursos Livres:** Empreendedores montam catálogos de cursos em vídeo e apostilas para monetizar conhecimento.
+
+## Anatomia Técnica (Versão 5.0 Customizada)
+- **Construção:** Ao contrário de outras ferramentas do catálogo, esta versão foi construída do zero pela CDC usando o PHP 8.3 oficial, compilando as dependências essenciais (gd, intl, zip) nativamente, visto que não existem imagens prontas seguras para o Moodle 5.
+- **Portas:** 80 (Web HTTP - O Apache foi reconfigurado internamente para servir a porta nativa).
+- **Diretório Público:** A partir da versão 5.x, por questões de segurança, o servidor web aponta exclusivamente para a pasta `/var/www/html/public`. Isso impede que o arquivo vital `config.php` seja acessado em caso de invasão.
+- **Dependências:** Exige um banco de dados relacional operando em conjunto (MariaDB).
+
+## Instalação e Configuração (Suporte a Variáveis de Ambiente)
+Diferente das instalações padrão, esta imagem customizada foi reestruturada para suportar configuração automática via variáveis de ambiente no Docker/Easypanel. Ela gera o arquivo `config.php` dinamicamente no boot do Apache.
+
+Configure as seguintes variáveis na aba **Environment (Ambiente)** do Easypanel para o App Moodle:
+- `MOODLE_DB_HOST`: Host interno do banco de dados (padrão: `moodle-db`).
+- `MOODLE_DB_NAME`: Nome do banco de dados SQL (padrão: `moodle_db`).
+- `MOODLE_DB_USER`: Usuário do banco de dados (padrão: `mariadb`).
+- `MOODLE_DB_PASS`: Senha do banco (deve ser a mesma gerada pelo Easypanel no MariaDB).
+- `MOODLE_WWWROOT`: URL completa com protocolo (ex: `https://educa.cdc.org.br`).
+
+## Guia de Volumes e Backups (CRÍTICO)
+- **Persistência de Dados:** **APENAS** o diretório `/var/www/moodledata` (onde ficam uploads e sessões) deve ser montado como volume persistente.
+- **NÃO persista a pasta `/var/www/html`:** Persistir esta pasta sobrescreve os novos deploys do Dockerfile (incluindo o Composer, o tema customizado e o config.php dinâmico). Deixe o código-fonte rodar diretamente da imagem compilada.
+- **Backup:** Faça backup diário do volume do `/var/www/moodledata` e do volume de dados do MariaDB. Force o acesso via HTTPS pelo Proxy Reverso (Traefik/Nginx) habilitando o SSL.
+
+## Possíveis Impeditivos ao Subir / Atualizar (Atenção ao Dockerfile)
+Como este Moodle é compilado do zero, existem fatores externos que podem quebrar o comando `docker build`:
+1. **Mudança de Branch no GitHub:** O Dockerfile clona a branch `MOODLE_502_STABLE`. Se a Moodle HQ lançar novas versões e remover branches antigas, o build falhará com erro `fatal: Remote branch not found`. Sempre atualize o número da branch no Dockerfile para a mais recente.
+2. **Atualizações do PHP:** O Moodle 5 exige PHP 8.3+. Se a imagem base `php:8.3-apache` for alterada no futuro, novas bibliotecas do Linux (no `apt-get`) podem ser exigidas, causando erro na compilação do `gd` ou `zip`.
+
+## Troubleshooting (Solução de Problemas)
+- **Erro 'rootdirpublic' ou 'Forbidden':** O Moodle 5 exige que a pasta web seja a `/public`. O nosso Dockerfile já faz essa injeção no Apache, mas se você tentar acessar e der erro, verifique se não há containers antigos e "fantasmas" rodando na porta errada (ex: um container antigo segurando a porta 8080). Limpe-os com `docker rm -f <nome>`.
+- **Erro HY000/2002 na Instalação (No such file):** Se na tela inicial de instalação web ele der erro de conexão com o banco, é porque você deixou a palavra `localhost` no campo Host do Banco de Dados. Lembre-se: em arquitetura Docker, o localhost do PHP não é o localhost do seu computador. O host correto é o nome do container: `cdc-moodle-mariadb`.
+- **Tela Branca:** Verifique se as permissões (chown) da pasta `/var/www/moodledata` estão aplicadas como `www-data` no Dockerfile. O Moodle se recusa a iniciar se não tiver acesso de gravação.
+
+## Lições Aprendidas no Desenvolvimento do Tema Uena
+Para futuras atualizações ou se for necessário refazer o tema customizado, atente-se às seguintes lições técnicas aprendidas durante o desenvolvimento:
+1. **Compilação Silenciosa do SCSS:** O Moodle falha silenciosamente ao compilar o SCSS (revertendo para o Boost padrão em caso de erro). Para forçar a exibição de exceções de compilação, execute o script CLI:
+   ```bash
+   docker exec cdc-moodle php -r "
+     define('CLI_SCRIPT', true); require('/var/www/html/config.php');
+     \$theme = theme_config::load('cdc_moodle'); \$compiler = new core_scss();
+     \$compiler->prepend_raw_scss(\$theme->get_pre_scss_code());
+     \$ref = new ReflectionObject(\$theme); \$method = \$ref->getMethod('get_scss_property');
+     \$method->setAccessible(true); list(\$paths, \$scss) = \$method->invoke(\$theme);
+     if (is_string(\$scss)) { \$compiler->set_file(\$scss); }
+     else { \$compiler->append_raw_scss(\$scss(\$theme)); \$compiler->setImportPaths(\$paths); }
+     \$compiler->append_raw_scss(\$theme->get_extra_scss_code());
+     try { \$compiler->to_css(); echo 'SUCCESS\n'; }
+     catch (Exception \$e) { echo 'ERROR: ' . \$e->getMessage() . '\n'; }
+   "
+   ```
+2. **Variáveis e Mixins Legados:** Mixins de responsividade customizados do Uena (ex: `@include respond(...)`) devem ficar concentrados em `scss/uena/_mixin.scss` (importado primeiro em `lib.php`). As variáveis de cores e layouts Uena devem ser declaradas em `lib.php` dentro de `theme_cdc_moodle_get_pre_scss` usando a flag `!default`.
+3. **Alinhamento do Ícone de Olho (Show/Hide Password):** O script `core/togglesensitive` insere o botão de olho no input de senha. Como dividimos a senha e o botão de entrar em colunas (`.col-8` e `.col-4`), o olho quebrava a linha. A solução é travar a quebra no wrapper:
+   ```css
+   .toggle-sensitive-wrapper { display: flex !important; flex-wrap: nowrap !important; width: 100% !important; }
+   .toggle-sensitive-wrapper .form-control { flex-grow: 1 !important; border-top-right-radius: 0 !important; border-bottom-right-radius: 0 !important; }
+   .toggle-sensitive-wrapper .toggle-sensitive-btn { flex-shrink: 0 !important; border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important; border-top-right-radius: 0.75rem !important; border-bottom-right-radius: 0.75rem !important; }
+   ```
+4. **Sincronização de Chaves no LocalStorage:** Evite que novas variáveis de acessibilidade (como largura de layout) fiquem como `undefined` nos navegadores dos alunos que já visitaram o site (que possuem JSON salvos antigos sem essas chaves). Em `accessibility.js`, use sempre `$.extend({}, settings, loaded)` para mesclar os dados carregados com os valores padrão.
+5. **Redimensionamento Boxed/Wide Boxed:** Nunca restrinja o tamanho máximo de `#page.drawers` (quebra a animação lateral dos menus calculada pelo Moodle via JS). Direcione a regra de largura máxima para o contêiner interno `.main-inner`:
+   ```css
+   #page.drawers .main-inner, .main-inner { max-width: var(--theme-container-width, 100%) !important; margin-left: auto !important; margin-right: auto !important; width: 100% !important; transition: max-width 0.22s ease-in-out !important; }
+   ```
+6. **Remoção de Bordas no Menu de Usuário:** O menu do usuário (`#user-menu-toggle`) herda bordas escuras indesejadas no clique/foco. Oculte a seta nativa (`::after { display: none !important }`) e estilize o círculo de iniciais (`.userinitials`) com cores da marca CDC (laranja translúcido de fundo e texto em laranja escuro) para remover o cinza padrão de forma profissional:
+   ```css
+   .usermenu .avatar span.userinitials { background-color: rgba(255, 114, 13, 0.1) !important; color: #FF720D !important; font-weight: 600 !important; border-radius: 50% !important; }
+   ```

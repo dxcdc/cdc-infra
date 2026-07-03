@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  postgres:
+    image: gttransformadigital/postgres:1.0
+    container_name: gttransformadigital-postgres
+    restart: always
+    networks:
+      - gttransformadigital-net
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres_pass
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=main_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+networks:
+  gttransformadigital-net:
+    driver: bridge
+volumes:
+  postgres_data:

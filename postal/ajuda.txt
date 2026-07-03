@@ -1,0 +1,26 @@
+# POSTAL (Servidor de Disparo de E-mails - SMTP)
+## Visão Geral e Propósito
+O Postal é um motor de e-mail focado em disparos de alto volume (transacional). Ele garante que os e-mails vitais do ERPNext e do Moodle (como redefinição de senhas, faturas e avisos) cheguem à caixa de entrada do usuário sem serem barrados como SPAM.
+
+## Arquitetura
+1. **MariaDB:** Onde as credenciais e os logs dos e-mails disparados ficam salvos.
+2. **RabbitMQ:** Onde os e-mails aguardam milissegundos na fila antes de saírem para a internet.
+3. **Web:** Painel administrativo rodando na **Porta 5000**.
+4. **Worker e SMTP:** Os motores ocultos que rodam na **Porta 25**.
+
+## Como Instalar pela Primeira Vez (Importante)
+O Postal não funciona apenas rodando um `docker compose up -d` porque ele precisa fabricar chaves criptográficas atreladas ao seu domínio real antes de ligar.
+
+Siga os passos rigorosamente:
+1. Abra o arquivo `.env` e defina um domínio real (ex: `postal.cdc.org.br`).
+2. Rode o comando no terminal: `bash instalar_postal.sh`
+3. O script vai parar na metade e pedir para você abrir o arquivo `config/postal.yml` que acabou de aparecer na pasta.
+4. Abra o `postal.yml` e preencha as senhas do RabbitMQ e do MariaDB iguais as que estão no `.env`. Substitua também as menções à palavra "mysql" por "mariadb" caso necessário na aba de configuração do host do banco.
+5. Rode `bash instalar_postal.sh` pela segunda vez.
+6. Ele conectará no banco, inicializará as tabelas e fará perguntas interativas na tela preta (pedindo seu e-mail, nome e senha) para criar o usuário Administrador Master.
+
+Feito isso, tudo está pronto para sempre! Daqui em diante, basta usar o `docker compose up -d` ou o `docker compose down`.
+
+## Troubleshootings Críticos
+- **E-mails não saem (Ficam presos na Fila):** Seu provedor de VPS (AWS, DigitalOcean) certamente está com a Porta 25 bloqueada no firewall de rede deles (é uma política antipirataria padrão). Abra um ticket com o provedor informando que você é uma ONG legítima e precisa da Porta 25 aberta.
+- **E-mails caem no SPAM:** O Postal sozinho não faz milagre. Você precisa entrar na sua Cloudflare (ou Registro.br) e adicionar o DKIM e o SPF gerados na interface do Postal dentro dos painéis de DNS do seu domínio principal.

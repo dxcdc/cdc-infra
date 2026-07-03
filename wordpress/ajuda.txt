@@ -1,0 +1,20 @@
+# WORDPRESS
+## Visão Geral e Propósito
+De longe, a ferramenta de CMS (Content Management System) dominante na face do planeta Terra, com cerca de 40% da internet total gerida por ele. Antigamente visto só para blogs, hoje é focado na construção visual e dinâmica de e-commerces, revistas eletrônicas, páginas e portfólios institucionais complexos empurrados pela força bruta de plugins potentes (Ex: Elementor, WooCommerce).
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Landing Pages Vencedoras (B2B/B2C):** Agências construindo e subindo em minutos portais estáticos para captar e-mails para lançamentos de marketing via SEO.
+2. **Varejo Completo (E-Commerce):** Lojistas ativando WooCommerce, sistemas logísticos (Correios) e meios de pagamentos para lidar com venda orgânica direta sem depender de lojas hospedadas caras (Shopify).
+
+## Anatomia Técnica
+- **Portas Básicas:** 80 (Acesso HTTP servido por engine do Apache ou fpm e Nginx auxiliando frontais).
+- **Banco de Dados Necessário:** MariaDB ou MySQL pareados na rede do Docker são mandatórios.
+- **Variáveis Vitais:** `WORDPRESS_DB_HOST` (o hostname exato do container DB) e usuário/senhas.
+
+## Guia de Segurança e Backups
+- **Segurança Endêmica:** Pela sua popularidade imensa, sofre centenas de ataques de bots automatizados buscando invadir portas no `/wp-admin`. Você OBRIGATORIAMENTE deve adicionar plugins protetores, esconder sua pasta de admin, adicionar captchas 2FA e jamais usar nomes de admin básicos.
+- **Backups Constantes (Pasta wp-content):** Todas as extensões que darão a força mágica ao seu projeto assim como o núcleo dele (as imagens subidas e os plugins de mercado) ficarão no volume `/var/www/html/wp-content`. Exporte o banco e compacte o volume com fervor.
+
+## Troubleshooting (Solução de Problemas)
+- **Tela Branca da Morte (WSOD - White Screen Of Death):** Instalou um plugin podre e agora nenhum painel aparece mais (nem ao tentar logar)? Destrua/Remova a pasta física ou altere o nome da pasta local desse plugin dentro do seu Volume `wp-content/plugins/PLUGIN_RUIM_AQUI` via terminal, e recarregue a página, o núcleo matará a quebra devolvendo a visão.
+- **Loop de HTTPS Redirect e Arquivo wp-config.php:** Em setups com Nginx Proxy Manager e certificados LetsEncrypt na frente (Cloudflare Proxy no front, por exemplo), pode dar um erro de infinidade de redirecionamentos porque o wordpress confuso crê estar acessando algo via HTTP e re-redireciona ao HTTPS infinitamente. Insira as forçadas condicionais de proxy (`$_SERVER['HTTPS']='on';` e etc) no seu volume físico do arquivo `wp-config.php`.

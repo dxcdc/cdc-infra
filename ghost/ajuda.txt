@@ -1,0 +1,20 @@
+# GHOST
+## Visão Geral e Propósito
+Se o WordPress focou na grandiosidade que abraça tudo o que existir, o GHOST foi feito apenas em NodeJS para focar absurdamente (e unicamente) na escrita elegante, simplicidade total, publicações, velocidade de navegação vertiginosa no estilo de "assinantes" e envios de newsletters para "Creators". Limpo, moderno e imensamente leve. 
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Sites Estilo "The Verge" ou "Medium":** Editores solo redigindo crônicas gigantes (focadas em experiência de visualização bonita limpa em celulares) e vendendo modelos de inscrição pagas.
+2. **Empresas de Newsletter (Substack-like):** Escapando das taxas cobradas em newsletters, uma empresa sobe o ghost, redige 1 artigo maravilhoso internamente com fotos fantásticas e, ao publicar apertando 1 botão, 5.000 pessoas recebem a matéria direto no GMAIL, gerenciando cobranças premium atreladas ao STRIPE internamente e nativo.
+
+## Anatomia Técnica
+- **Portas Básicas:** 2368.
+- **Banco de Dados Auxiliares:** Originalmente utilizava SQLite em volume, mas versões corporativas mandam usar conexão com o clássico MySQL 8+ em paralelo para maior força e evitar quebras de lock DB.
+- **Variável Principal Sensível de URL (`url=https://seu.dominio.lindo.com`):** É de EXTREMA NECESSIDADE ser correta, se o domínio oficial do Ghost não for pareado na variável, o painel ghost envia os e-mails e gera caminhos das imagens apontando internamente pro nada, quebrando fotos das matérias. 
+
+## Guia de Segurança e Backups
+- **Segurança (Configuração Frontal HTTPS):** O ghost foi montado assumindo ser forte por trás de proxy; esconda as portas atrás e bloqueie caminhos indevidos ao acesso nativo com cloudflare firewalls.
+- **Backups da vida (`/var/lib/ghost/content`):** As pastas de conteúdos vitais, temas que você instalou e imagens dos artigos residem aqui no seu volume físico local.
+
+## Troubleshooting (Solução de Problemas)
+- **Temas Quebrando / Memory Load no Node:** A imagem base default do Node Ghost baseia-se em um alpine menor. Se o servidor for nanico (Ex: 512 de memoria t2 micro na AWS), a execução de build de temas Node pode crashear o deploy por OOM (Out Of memory RAM do servidor base) na compilação.
+- **Envios de E-mail Falhando (Mailgun Mandatório nas versões):** As configurações antigas de envio de email nativo do servidor usando a biblioteca interna falham com anti-spams ou são lentas demais. Configurar SMTP (Variáveis de ambiente de mail__options) é altamente recomendado para a saúde da News.

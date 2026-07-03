@@ -23,7 +23,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN docker-php-ext-configure gd --with-jpeg \
     && docker-php-ext-install gd intl mysqli zip soap opcache exif
 
-# 3. Baixar o código-fonte oficial do Moodle 5.0, o tema cdc_moodle, o plugin Custom Certificate e instalar dependências do Composer
+# 3. Baixar o código-fonte oficial do Moodle 5.0, o tema cdc_moodle e instalar dependências do Composer
 RUN rm -rf /var/www/html/* \
     && git clone --depth 1 --branch MOODLE_502_STABLE https://github.com/moodle/moodle.git /var/www/html \
     && git clone --depth 1 https://github.com/dxcdc/temamoodle.git /var/www/html/theme/cdc_moodle \

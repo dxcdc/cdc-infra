@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  redis:
+    image: gttransformadigital/redis:1.0
+    container_name: gttransformadigital-redis
+    restart: always
+    networks:
+      - gttransformadigital-net
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+networks:
+  gttransformadigital-net:
+    driver: bridge
+volumes:
+  redis_data:

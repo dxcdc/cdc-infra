@@ -1,0 +1,21 @@
+# METABASE
+## Visão Geral e Propósito
+O Metabase é uma ferramenta de Business Intelligence (BI) e visualização de dados incrivelmente intuitiva. Ele se conecta a dezenas de tipos de bancos de dados e permite que pessoas sem conhecimento técnico em SQL criem gráficos, painéis e relatórios complexos com poucos cliques.
+
+## Cenários Mais Comuns (Exemplos Práticos)
+1. **Dashboard Executivo:** Diretores analisando KPIs da empresa em tempo real na TV do escritório.
+2. **Relatórios de Vendas:** Equipes comerciais monitorando metas mensais conectando o Metabase diretamente ao banco de dados do sistema ERP.
+3. **Análise de Usuários:** Startups extraindo métricas de engajamento de seus aplicativos direto do PostgreSQL.
+
+## Anatomia Técnica
+- **Portas:** 3000 (Painel Web UI).
+- **Volumes:** Mapeie `/metabase-data` para evitar perder suas perguntas, gráficos e dashboards configurados.
+- **Configuração:** Não exige variáveis complexas no Dockerfile; a conexão com os bancos de dados é feita via interface gráfica após o primeiro acesso.
+
+## Guia de Segurança e Backups
+- **Segurança:** O Metabase permite criar usuários com "permissões granulares". Garanta que usuários comuns só tenham permissão de *leitura* nos bancos conectados, evitando vazamento ou deleção acidental de dados.
+- **Backups:** Faça backup do volume `/metabase-data`. Ele contém o banco H2 interno que armazena todas as suas configurações.
+
+## Troubleshooting (Solução de Problemas)
+- **Erro ao conectar ao Banco Externo:** Se o Metabase não conseguir ler seu MySQL/Postgres, certifique-se de que eles estão na mesma rede (`docker network`) ou que o IP do host foi liberado.
+- **Perda de Dados no Restart:** Se o container for recriado e o Metabase voltar como se fosse novo, significa que você não mapeou o volume `/metabase-data` corretamente.
