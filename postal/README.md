@@ -1,5 +1,13 @@
 # CDC - Servidor de Disparo de E-mails (Postal)
 
+<p align="left">
+  <a href="https://postalserver.io/"><img src="https://img.shields.io/badge/Postal-v3.3.7-blue?style=for-the-badge" alt="Postal v3"></a>
+  <a href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker"></a>
+  <a href="https://nginx.org/"><img src="https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white" alt="Nginx"></a>
+  <a href="https://easypanel.io/"><img src="https://img.shields.io/badge/Easypanel-v2.32-1b1f23?style=for-the-badge" alt="Easypanel"></a>
+  <a href="https://moodle.org/"><img src="https://img.shields.io/badge/Moodle-F7931E?style=for-the-badge&logo=moodle&logoColor=white" alt="Moodle"></a>
+</p>
+
 Este repositório contém a documentação, scripts e templates de infraestrutura para o servidor de envio de e-mails transacionais (alternativa open-source ao SendGrid/Mailgun) da **CDC (Centro de Desenvolvimento e Cidadania)**, atendendo ao Moodle e a outros projetos futuros.
 
 O servidor de e-mails foi implantado com sucesso utilizando o **Postal v3** rodando em Docker e integrado com o proxy reverso **Traefik** do **Easypanel** no ambiente Ubuntu VPS.
