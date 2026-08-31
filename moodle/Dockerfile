@@ -5,11 +5,6 @@ LABEL built_for="Producao"
 
 # 1. Instalar bibliotecas essenciais do sistema operacional e Composer
 RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libxml2-dev \
-    libzip-dev \
-    libicu-dev \
     mariadb-client \
     git \
     curl \
@@ -19,15 +14,18 @@ RUN apt-get update && apt-get install -y \
 # Instalar Composer globalmente
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# 2. Instalar e configurar extensões do PHP obrigatórias para o Moodle (incluindo exif)
-RUN docker-php-ext-configure gd --with-jpeg \
-    && docker-php-ext-install gd intl mysqli zip soap opcache exif
+# Adicionar o instalador de extensões PHP (mlocati) para evitar compilação demorada e quedas de RAM
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+# 2. Instalar extensões do PHP obrigatórias para o Moodle
+RUN chmod +x /usr/local/bin/install-php-extensions && \
+    install-php-extensions gd intl mysqli zip soap opcache exif
 
 # 3. Baixar o código-fonte oficial do Moodle 5.0, o tema cdc_moodle e instalar dependências do Composer
 RUN rm -rf /var/www/html/* \
     && git clone --depth 1 --branch MOODLE_502_STABLE https://github.com/moodle/moodle.git /var/www/html \
-    && git clone --depth 1 https://github.com/dxcdc/temamoodle.git /var/www/html/theme/cdc_moodle \
-    && git clone --depth 1 --branch MOODLE_502_STABLE https://github.com/markn86/moodle-mod_customcert.git /var/www/html/mod/customcert \
+    && git clone --depth 1 https://github.com/dxcdc/temamoodle.git /var/www/html/public/theme/cdc_moodle \
+    && git clone --depth 1 --branch MOODLE_502_STABLE https://github.com/markn86/moodle-mod_customcert.git /var/www/html/public/mod/customcert \
     && cd /var/www/html \
     && composer install --no-dev --classmap-authoritative
 
