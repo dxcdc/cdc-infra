@@ -52,7 +52,6 @@ $CFG->dataroot  = "/var/www/moodledata"; \n\
 $CFG->admin     = "admin"; \n\
 $CFG->directorypermissions = 0777; \n\
 $CFG->sslproxy  = true; \n\
-$CFG->theme     = "cdc_moodle"; \n\
 require_once(__DIR__ . "/lib/setup.php");' > /var/www/html/config.php
 
 RUN chown -R www-data:www-data /var/www/html
